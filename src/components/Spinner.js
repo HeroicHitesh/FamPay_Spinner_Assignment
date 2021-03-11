@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Wheel } from "react-custom-roulette";
+import axios from "axios";
 
 const data = [
   {
@@ -42,7 +43,6 @@ export default function Spinner() {
 
   const handleSpinClick = () => {
     const newPrizeNumber = Math.floor(Math.random() * data.length);
-    console.log(newPrizeNumber);
     setPrizeNumber(newPrizeNumber);
     setMustSpin(true);
   };
