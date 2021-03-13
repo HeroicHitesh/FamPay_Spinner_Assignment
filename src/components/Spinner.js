@@ -16,11 +16,11 @@ const data = [
     style: { backgroundColor: "#551b31", textColor: "#e9e1e4" },
   },
   {
-    option: "₹20",
+    option: "₹20 💸",
     style: { backgroundColor: "#65203a", textColor: "#e9dfe3" },
   },
   {
-    option: "₹50",
+    option: "₹50 💸",
     style: { backgroundColor: "#832a4a", textColor: "#e5d2da" },
   },
   {
@@ -32,7 +32,7 @@ const data = [
     style: { backgroundColor: "#551b31", textColor: "#e9e1e4" },
   },
   {
-    option: "₹50",
+    option: "₹50 💸",
     style: { backgroundColor: "#65203a", textColor: "#e9dfe3" },
   },
 ];
@@ -40,11 +40,70 @@ const data = [
 export default function Spinner() {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
+  const [access_token, setAccess_token] = useState(
+    process.env.fampay_access_token
+  );
+  // Id of Google Spreadsheet which is used to store data
+  const spreadsheetId = process.env.fampay_spreadsheetId;
+
+  const apiCall = () => {
+    // Request Access Token from oAuth 2.0
+    axios
+      .post(`https://accounts.google.com/o/oauth2/v2/auth`, null, {
+        params: {
+          scope: "https://www.googleapis.com/auth/spreadsheets",
+          include_granted_scopes: true,
+          response_type: "token",
+          state: "state_parameter_passthrough_value",
+          redirect_uri: "http://fampay-spinner.herokuapp.com",
+          client_id: process.env.fampay_client_id,
+        },
+      })
+      .then(
+        (response) => {
+          console.log(response);
+          setAccess_token(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    // Post Data to Google Spreadsheet
+    var pwa = navigator.userAgentData.mobile ? "mobile-pwa" : "web-pwa";
+    var data = {
+      majorDimension: "ROWS",
+      values: [[pwa, new Date().toISOString(), prizeNumber]],
+    };
+    axios
+      .post(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/A1:append`,
+        data,
+        {
+          params: {
+            includeValuesInResponse: false,
+            insertDataOption: "INSERT_ROWS",
+            responseDateTimeRenderOption: "SERIAL_NUMBER",
+            responseValueRenderOption: "FORMATTED_VALUE",
+            valueInputOption: "USER_ENTERED",
+            access_token: access_token,
+          },
+        }
+      )
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  };
 
   const handleSpinClick = () => {
     const newPrizeNumber = Math.floor(Math.random() * data.length);
     setPrizeNumber(newPrizeNumber);
     setMustSpin(true);
+    apiCall();
   };
 
   return (
