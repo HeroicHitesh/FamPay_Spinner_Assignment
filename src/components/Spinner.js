@@ -41,10 +41,10 @@ export default function Spinner() {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
   const [access_token, setAccess_token] = useState(
-    process.env.fampay_access_token
+    process.env.REACT_APP_fampay_access_token
   );
   // Id of Google Spreadsheet which is used to store data
-  const spreadsheetId = process.env.fampay_spreadsheetId;
+  const spreadsheetId = process.env.REACT_APP_fampay_spreadsheetId;
 
   const apiCall = () => {
     // Request Access Token from oAuth 2.0
@@ -56,13 +56,13 @@ export default function Spinner() {
           response_type: "token",
           state: "state_parameter_passthrough_value",
           redirect_uri: "http://fampay-spinner.herokuapp.com",
-          client_id: process.env.fampay_client_id,
+          client_id: process.env.REACT_APP_fampay_client_id,
         },
       })
       .then(
         (response) => {
           console.log(response);
-          setAccess_token(response);
+          // setAccess_token(response);
         },
         (error) => {
           console.log(error);
@@ -85,7 +85,7 @@ export default function Spinner() {
             responseDateTimeRenderOption: "SERIAL_NUMBER",
             responseValueRenderOption: "FORMATTED_VALUE",
             valueInputOption: "USER_ENTERED",
-            access_token: access_token,
+            access_token: process.env.REACT_APP_fampay_access_token,
           },
         }
       )
