@@ -55,7 +55,7 @@ export default function Spinner() {
           include_granted_scopes: true,
           response_type: "token",
           state: "state_parameter_passthrough_value",
-          redirect_uri: "http://fampay-spinner.herokuapp.com",
+          redirect_uri: "https://fampay-spinner.herokuapp.com",
           client_id: process.env.REACT_APP_fampay_client_id,
         },
       })
@@ -85,7 +85,7 @@ export default function Spinner() {
             responseDateTimeRenderOption: "SERIAL_NUMBER",
             responseValueRenderOption: "FORMATTED_VALUE",
             valueInputOption: "USER_ENTERED",
-            access_token: process.env.REACT_APP_fampay_access_token,
+            access_token: access_token,
           },
         }
       )
